@@ -1,6 +1,7 @@
 package com.scyy.util;
 
 import com.scyy.po.TextMessage;
+import com.scyy.servlet.WeiXinServlet;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -21,6 +22,23 @@ import java.util.Map;
  * 功能：处理消息格式转换之类的事情
  */
 public class MessageUtil {
+
+    /**
+     * 说明：消息类型、事件类型定义
+     */
+    public static final String MESSAGE_TXT         = "text";           //文本消息
+    public static final String MESSAGE_IMAGE       = "image";
+    public static final String MESSAGE_VOICE       = "voice";
+    public static final String MESSAGE_VIDEO       = "video";
+    public static final String MESSAGE_SHORTVIDEO  = "shortvideo";
+    public static final String MESSAGE_LOCATION    = "location";
+    public static final String MESSAGE_LINK        = "link";
+    public static final String MESSAGE_EVENT       = "event";
+    public static final String MESSAGE_SUBSCRIBE   = "subscribe";
+    public static final String MESSAGE_UNSUBSCRIBE = "unsubscribe";
+    public static final String MESSAGE_SCAN        = "SCAN";
+    public static final String MESSAGE_CLICK       = "CLICK";
+    public static final String MESSAGE_VIEW        = "VIEW";
 
 
     /**
@@ -92,7 +110,7 @@ public class MessageUtil {
         text.setFromUserName(p_toUserName);
         text.setCreateTime(new Date().getTime());
         text.setContent(p_content);
-        text.setMsgType("text");
+        text.setMsgType(MESSAGE_TXT);
         return  textMessageToXml(text);
     }
 }
