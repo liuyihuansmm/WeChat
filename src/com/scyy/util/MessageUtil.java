@@ -67,7 +67,7 @@ public class MessageUtil {
      */
     public  static  String welcomeMenuText(){
         StringBuilder welMenu = new StringBuilder();
-        welMenu.append("欢迎您的关注！\n");
+        welMenu.append("欢迎关注国控四川医药服务号！\n");
         return  welMenu.toString();
     }
 
