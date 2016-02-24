@@ -1,5 +1,7 @@
 package com.scyy.util;
 
+import com.scyy.po.TextMessage;
+import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -8,6 +10,7 @@ import org.dom4j.io.SAXReader;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,5 +46,53 @@ public class MessageUtil {
 
         in.close();
         return  map;
+    }
+
+    /**
+     *
+     * @param textMessage
+     * @return
+     * 说明: 文本消息转成xml格式的String并返回
+     */
+    public static String textMessageToXml(TextMessage textMessage) {
+        XStream xStream = new XStream();
+        xStream.alias("xml",textMessage.getClass());
+        return xStream.toXML(textMessage);
+    }
+
+    /**
+     *
+     * @return
+     * 说明：定义欢迎菜单，当用户首次关注时，向用户返回
+     */
+    public  static  String welcomeMenuText(){
+        StringBuilder welMenu = new StringBuilder();
+        welMenu.append("欢迎您的关注！\n");
+        return  welMenu.toString();
+    }
+
+    /**
+     *
+     * @return
+     * 说明：定义感谢菜单，当用户取消关注时，向用户返回
+     */
+    public static  String  thanksMenuText() {
+        StringBuilder thanksMenu = new StringBuilder();
+        thanksMenu.append("感谢您的关注！\n");
+        return  thanksMenu.toString();
+    }
+    /**
+     *
+     * @return
+     * 说明：将String转成TextMassage
+     */
+    public static String toTextMessgae(String p_fromUserName, String p_toUserName, String p_content) {
+        TextMessage text = new TextMessage();
+        text.setToUserName(p_fromUserName);
+        text.setFromUserName(p_toUserName);
+        text.setCreateTime(new Date().getTime());
+        text.setContent(p_content);
+        text.setMsgType("text");
+        return  textMessageToXml(text);
     }
 }
