@@ -42,12 +42,18 @@ public class WeiXinServlet extends HttpServlet{
              * 说明：不同消息类型或事件类型的处理逻辑
              */
             if(msgType.equals(MessageUtil.MESSAGE_TXT)) {                         //文本消息
-                text.setToUserName(fromUserName);
-                text.setFromUserName(toUserName);
-                text.setCreateTime(new Date().getTime());
-                text.setContent("你发送的内容是:"+content);
-                text.setMsgType(MessageUtil.MESSAGE_TXT);
-                message = MessageUtil.textMessageToXml(text);
+
+                if(content.equals("1")) {
+                    message = MessageUtil.toNewsMessage(fromUserName,toUserName);
+                }else  {
+                    text.setToUserName(fromUserName);
+                    text.setFromUserName(toUserName);
+                    text.setCreateTime(new Date().getTime());
+                    text.setContent("你发送的内容是:"+content);
+                    text.setMsgType(MessageUtil.MESSAGE_TXT);
+                    message = MessageUtil.textMessageToXml(text);
+                }
+                System.out.println(message);
                 out.print(message);
             } else if(msgType.equals(MessageUtil.MESSAGE_EVENT)) {
                 String eveType = map.get("Event");

@@ -1,7 +1,10 @@
 package com.scyy.util;
 
+import com.scyy.po.NewsItem;
+import com.scyy.po.NewsMessage;
 import com.scyy.po.TextMessage;
 import com.scyy.servlet.WeiXinServlet;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -11,10 +14,7 @@ import org.dom4j.io.SAXReader;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LYH on 2016/2/24.
@@ -27,6 +27,7 @@ public class MessageUtil {
      * 说明：消息类型、事件类型定义
      */
     public static final String MESSAGE_TXT         = "text";           //文本消息
+    public static final String MESSAGE_NEWS       = "news";           //文本消息
     public static final String MESSAGE_IMAGE       = "image";
     public static final String MESSAGE_VOICE       = "voice";
     public static final String MESSAGE_VIDEO       = "video";
@@ -112,5 +113,63 @@ public class MessageUtil {
         text.setContent(p_content);
         text.setMsgType(MESSAGE_TXT);
         return  textMessageToXml(text);
+    }
+
+    /**
+     *
+     * @param newsMessage
+     * @return
+     * 说明：新闻消息转成xml
+     */
+    public static  String newsMessageToXml(NewsMessage newsMessage) {
+        XStream xStream = new XStream();
+        xStream.alias("xml",newsMessage.getClass());
+        xStream.alias("item",new NewsItem().getClass());
+       return xStream.toXML(newsMessage);
+    }
+
+
+    /**
+     *
+     * @param p_fromUserName
+     * @param p_toUserName
+     * @return
+     * 说明：包装成新闻消息
+     */
+    public  static  String  toNewsMessage(String p_fromUserName, String p_toUserName) {
+
+        List<NewsItem> list = new ArrayList<NewsItem>();
+
+        NewsItem item1 = new NewsItem();
+        item1.setTitle("测试");
+        item1.setDescription("1234");
+        item1.setPicUrl("http://lyh.ngrok.natapp.cn/WeChat/resources/images/11.jpg");
+        item1.setUrl("http://www.baidu.com");
+
+        NewsItem item21 = new NewsItem();
+        item21.setTitle("国控四川");
+        item21.setDescription("坑爹的SCYY");
+        item21.setPicUrl("http://lyh.ngrok.natapp.cn/WeChat/resources/images/21.jpg");
+        item21.setUrl("http://www.scyy.com");
+
+        NewsItem item22 = new NewsItem();
+        item22.setTitle("拉勾网");
+        item22.setDescription("找工作上拉勾");
+        item22.setPicUrl("http://lyh.ngrok.natapp.cn/WeChat/resources/images/22.jpg");
+        item22.setUrl("http://www.lagou.com/");
+
+        list.add(item1);
+        list.add(item21);
+        list.add(item22);
+
+        NewsMessage message = new NewsMessage();
+        message.setFromUserName(p_toUserName);
+        message.setToUserName(p_fromUserName);
+        message.setCreateTime(new Date().getTime());
+        message.setArticleCount(list.size());
+        message.setArticles(list);
+        message.setMsgType(MESSAGE_NEWS);
+
+        return newsMessageToXml(message);
     }
 }
