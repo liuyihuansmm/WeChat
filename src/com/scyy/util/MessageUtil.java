@@ -1,10 +1,9 @@
 package com.scyy.util;
 
+import com.scyy.beans.SkuBean;
 import com.scyy.po.NewsItem;
 import com.scyy.po.NewsMessage;
 import com.scyy.po.TextMessage;
-import com.scyy.servlet.WeiXinServlet;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -100,6 +99,21 @@ public class MessageUtil {
         thanksMenu.append("感谢您的关注！\n");
         return  thanksMenu.toString();
     }
+
+    /**
+     *
+     * @return
+     * 说明：帮助菜单
+     */
+    public static  String helpMenuText() {
+        StringBuilder helpMenu = new StringBuilder();
+        helpMenu.append("欢迎您的关注，请按提示进行操作：\n");
+        helpMenu.append("1. 公司介绍\n");
+        helpMenu.append("2. 药品查询\n");
+        helpMenu.append("3. 回复？调出此菜单");
+        return  helpMenu.toString();
+    }
+
     /**
      *
      * @return
@@ -148,15 +162,15 @@ public class MessageUtil {
 
         NewsItem item21 = new NewsItem();
         item21.setTitle("国控四川");
-        item21.setDescription("坑爹的SCYY");
+        item21.setDescription("SCYY");
         item21.setPicUrl("http://lyh.ngrok.natapp.cn/WeChat/resources/images/21.jpg");
         item21.setUrl("http://www.scyy.com");
 
         NewsItem item22 = new NewsItem();
-        item22.setTitle("拉勾网");
-        item22.setDescription("找工作上拉勾");
+        item22.setTitle("百度");
+        item22.setDescription("搜索引擎");
         item22.setPicUrl("http://lyh.ngrok.natapp.cn/WeChat/resources/images/22.jpg");
-        item22.setUrl("http://www.lagou.com/");
+        item22.setUrl("http://www.baidu.com/");
 
         list.add(item1);
         list.add(item21);
@@ -171,5 +185,35 @@ public class MessageUtil {
         message.setMsgType(MESSAGE_NEWS);
 
         return newsMessageToXml(message);
+    }
+
+
+    /**
+     *
+     * @param p_fromUserName
+     * @param p_toUserName
+     * @param list
+     * @return
+     * 说明：药品查询结果转TextMessage格式的Stirng
+     */
+    public static  String skuToTextMessage(String p_fromUserName, String p_toUserName,List<SkuBean> list) {
+        TextMessage text = new TextMessage();
+        text.setToUserName(p_fromUserName);
+        text.setFromUserName(p_toUserName);
+        text.setCreateTime(new Date().getTime());
+        text.setMsgType(MESSAGE_TXT);
+
+        StringBuffer content = new StringBuffer();
+        if(list.size()==0) {
+            content.append("查无此药");
+        }else{
+            for(SkuBean temp:list) {
+                content.append("======================"+"\n");
+                content.append(temp.toString()+"\n");
+            }
+        }
+
+        text.setContent(content.toString());
+        return  textMessageToXml(text);
     }
 }

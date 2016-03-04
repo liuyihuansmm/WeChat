@@ -1,5 +1,6 @@
 package com.scyy.servlet;
 
+import com.scyy.dao.SkuDAO;
 import com.scyy.po.TextMessage;
 import com.scyy.util.CheckConnectUtil;
 import com.scyy.util.MessageUtil;
@@ -36,36 +37,38 @@ public class WeiXinServlet extends HttpServlet{
             String content = map.get("Content");
 
             TextMessage text = new TextMessage();
-            String message;
+            String message = null;
 
             /**
              * 说明：不同消息类型或事件类型的处理逻辑
              */
             if(msgType.equals(MessageUtil.MESSAGE_TXT)) {                         //文本消息
-
-                if(content.equals("1")) {
+                if(content.equals("?")||content.equals("？")){
+                    message = MessageUtil.toTextMessgae(fromUserName,toUserName,MessageUtil.helpMenuText());
+                }else if(content.equals("1")){
                     message = MessageUtil.toNewsMessage(fromUserName,toUserName);
-                }else  {
-                    text.setToUserName(fromUserName);
-                    text.setFromUserName(toUserName);
-                    text.setCreateTime(new Date().getTime());
-                    text.setContent("你发送的内容是:"+content);
-                    text.setMsgType(MessageUtil.MESSAGE_TXT);
-                    message = MessageUtil.textMessageToXml(text);
+                }else if(content.equals("2")){
+                    message = MessageUtil.toTextMessgae(fromUserName,toUserName,"请输入药品名称：");
+                }else {
+                    message = MessageUtil.skuToTextMessage(fromUserName,toUserName, SkuDAO.queryDescr(content));
                 }
-                System.out.println(message);
-                out.print(message);
             } else if(msgType.equals(MessageUtil.MESSAGE_EVENT)) {
                 String eveType = map.get("Event");
                 if(eveType.equals(MessageUtil.MESSAGE_SUBSCRIBE)){               //用户未关注时，进行关注后的事件推送
                     message = MessageUtil.toTextMessgae(fromUserName,toUserName,MessageUtil.welcomeMenuText());
-                    out.print(message);
-                }else if(eveType.equals(MessageUtil.MESSAGE_UNSUBSCRIBE)){       //用户取消关注后的事件推送
-                    message = MessageUtil.toTextMessgae(fromUserName,toUserName,MessageUtil.thanksMenuText());
-                    out.print(message);
+                }if(eveType.equals(MessageUtil.MESSAGE_CLICK)){
+                    String eventKey = map.get("EventKey");
+                    if(eventKey.equals("help")) {
+                        message = MessageUtil.toTextMessgae(fromUserName,toUserName,MessageUtil.helpMenuText());
+                    }
+
                 }
             }
 
+            //输出回复
+            if(message!=null){
+                out.print(message);
+            }
         } catch (DocumentException e) {
             e.printStackTrace();
         } finally {
